@@ -121,7 +121,13 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 
 	@Override
 	public T find(Object id) {
-		return Query.table(this.table).select().where(this.primaryKey, "=", id).get(this.mapper).get(0);
+		List<T> results = Query.table(this.table).select().where(this.primaryKey, "=", id).get(this.mapper);
+		
+		if (results != null && results.size() > 0) {
+			return results.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override

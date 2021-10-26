@@ -1,7 +1,9 @@
 package controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +18,7 @@ import dao.impl.ProductDAO;
  */
 public class ProductController extends HttpServlet implements IBaseController {
 	private static final long serialVersionUID = 1L;
+	private final ProductDAO dao = new ProductDAO();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -48,11 +51,30 @@ public class ProductController extends HttpServlet implements IBaseController {
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("text/html; charset=UTF-8");
+
 		String uri = request.getServletPath();
 
 		switch (uri) {
 		case "/product":
 			this.index(request, response);
+			break;
+		case "/product/create":
+			this.create(request, response);
+			break;
+		case "/product/store":
+			this.store(request, response);
+			break;
+		case "/product/edit":
+			this.edit(request, response);
+			break;
+		case "/product/update":
+			this.update(request, response);
+			break;
+		case "/product/destroy":
+			this.destroy(request, response);
 			break;
 
 		default:
@@ -60,40 +82,86 @@ public class ProductController extends HttpServlet implements IBaseController {
 		}
 	}
 
+	// index
 	protected void index(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Product> listProduct = (new ProductDAO()).all();
+		for (Product product : listProduct) {
+			System.out.println(product.toString());
+		}
 		request.setAttribute("listProduct", listProduct);
 		this.view("products/index.jsp", request, response);
 
 	}
 
+	// create
 	protected void create(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		this.view("products/create.jsp", request, response);
 	}
 
+	// store
 	protected void store(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		Map<String, String[]> inputs = request.getParameterMap();
+
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("name", inputs.get("name")[0]);
+		data.put("price", inputs.get("price")[0]);
+		data.put("amount", inputs.get("amount")[0]);
+
+		if (this.dao.create(data) != -1) {
+			response.sendRedirect("/PROJECT/product");
+			return;
+		} else {
+			response.sendRedirect("/PROJECT/product/create");
+			return;
+		}
 	}
 
+	// edit
 	protected void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		String id = request.getParameter("id");
+		Product product = this.dao.find(id);
+
+		request.setAttribute("product", product);
+		this.view("products/edit.jsp", request, response);
 	}
 
+	// update
 	protected void update(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		Map<String, String[]> inputs = request.getParameterMap();
+		Map<String, Object> dataUpdate = new HashMap<String, Object>();
+
+		String id = inputs.get("id")[0];
+
+		dataUpdate.put("name", inputs.get("name")[0]);
+		dataUpdate.put("price", inputs.get("price")[0]);
+		dataUpdate.put("amount", inputs.get("amount")[0]);
+
+		if (this.dao.update(id, dataUpdate) > 0) {
+			response.sendRedirect("/PROJECT/product");
+			return;
+		} else {
+			response.sendRedirect("/PROJECT/product/edit?id=" + id);
+			return;
+		}
 	}
 
+	// destroy
 	protected void destroy(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		String id = request.getParameter("id");
+
+		this.dao.delete(id);
+		response.sendRedirect("/PROJECT/product");
+
+		return;
 	}
 }

@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import bean.Test;
-
 public class Helper {
 	// lấy tên các thuộc tính của object
 	public static List<Field> getObjectField(Class<?> type, boolean getSuperClassField) {
@@ -58,7 +56,7 @@ public class Helper {
 		return map;
 	}
 
-	public static Map<String, Object> objectToHashMapIgnoreField(Object object, String ...ignore) {
+	public static Map<String, Object> objectToHashMapIgnoreField(Object object, String... ignore) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<Field> fields = getObjectField(object, true);
 		List<String> ignoreField = Arrays.asList(ignore);
@@ -112,6 +110,6 @@ public class Helper {
 
 	public static void main(String[] args) {
 		System.out.println(Helper.toCamel("ten lua", true));
-		
+
 	}
 }

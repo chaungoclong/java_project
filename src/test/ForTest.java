@@ -37,9 +37,11 @@ public class ForTest {
 
 	public static void main(String[] args)
 			throws ClassNotFoundException, IllegalArgumentException, IllegalAccessException {
-//		Class<?> c = Test.class;
-//		Class<?> e = Class.forName("bean.Test");
-//		System.out.println(c + "|" + e);
+		Test t = new Test();
+		Class<?> c = Test.class;
+		Class<?> e = Class.forName("bean.Test");
+		Class<?> d = t.getClass();
+		System.out.println(c + "|" + e + "|" + d);
 ////		
 //		TestDAO dao = new TestDAO();
 //		Map<String, Object> params = new HashMap<String, Object>();
@@ -99,22 +101,22 @@ public class ForTest {
 //		}
 
 //		ForTest.show(a);
-//		
-		Test t = new Test();
-		t.setId(1);
-		t.setName("abc-xyz-okok");
+////		
+//		Test t = new Test();
+//		t.setId(1);
+//		t.setName("abc-xyz-okok");
 //		
 //		Map<String, Object> data = Helper.objectToHashMapIgnoreField(t, "name");
 //		for (String k : data.keySet()) {
 //			System.out.println(k + "-" + data.get(k));
 //		}
 
-		TestDAO dao = new TestDAO();
-		dao.create(t);
-		List<Test> ls = dao.all();
-
-		for (Test test : ls) {
-			System.out.println(test.getId() + "|" + test.getName());
-		}
+//		TestDAO dao = new TestDAO();
+//		dao.create(t);
+//		List<Test> ls = dao.all();
+//
+//		for (Test test : ls) {
+//			System.out.println(test.getId() + "|" + test.getName());
+//		}
 	}
 }
