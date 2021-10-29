@@ -229,6 +229,7 @@ public class Query {
 		}
 
 		String sql = QueryBuilder.insertInto(this.table, data).render();
+		System.out.println(sql);
 		Object[] params = data.values().toArray();
 
 		return this.db.__insert(sql, params);

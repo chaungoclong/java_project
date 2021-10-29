@@ -1,9 +1,11 @@
 package dao.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import dao.IBaseDAO;
 import database.Query;
@@ -101,15 +103,23 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 
 	@Override
 	public int create(Map<String, Object> data) {
-		List<String> listField = Arrays.asList(this.insertField);
-
+		List<String> listField = Arrays.asList(this.insertField).stream().map(String::toLowerCase).collect(Collectors.toList());
+		List<String> removeKey = new ArrayList<String>();
+		
+		// tìm tên cột không phù hợp
 		for (String key : data.keySet()) {
-			if (!listField.contains(key)) {
-				data.remove(key);
+			if (!listField.contains(key.toLowerCase())) {
+				removeKey.add(key);
 			}
+		}
+		
+		// xóa cột không phù hợp
+		for (String key : removeKey) {
+			data.remove(key);
 		}
 
 		int insertedID = Query.table(this.table).insert(data);
+		System.out.println(insertedID);
 
 		return insertedID;
 	}

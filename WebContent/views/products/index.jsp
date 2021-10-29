@@ -27,7 +27,17 @@
 			<div class="content">
 				<div class="container-fluid">
 					<div class="page-title">
-						<h3>Blank Page</h3>
+						<h3>LIST PRODUCT</h3>
+						<a:if test="${sessionScope.success != null}">
+							<div class="alert alert-success alert-dismissible fade show"
+								role="alert">
+								<strong>Success!</strong> ${sessionScope.success}
+								${sessionScope.success = null}
+								<button type="button" class="btn-close" data-bs-dismiss="alert"
+									aria-label="Close"></button>
+							</div>
+						</a:if>
+
 						<div class="row">
 							<div class="col-md-12 col-lg-12">
 								<div class="card">
@@ -42,7 +52,7 @@
 														<th>Price</th>
 														<th>Amount</th>
 														<th width="20%">Action</th>
-													
+
 													</tr>
 												</thead>
 												<tbody>
@@ -57,8 +67,10 @@
 																	<td>${product.amount}</td>
 																	<td>
 																		<div class="btn-group d-flex justify-content-end">
-																			<a class="btn btn-primary" href="/PROJECT/product/edit?id=${product.id}">EDIT</a>
-																			<a class="btn btn-danger" href="/PROJECT/product/destroy?id=${product.id}">DELETE</a>
+																			<a class="btn btn-primary"
+																				href="/PROJECT/product/edit?id=${product.id}">EDIT</a>
+																			<a class="btn btn-danger"
+																				href="/PROJECT/product/destroy?id=${product.id}">DELETE</a>
 																		</div>
 																	</td>
 																</tr>

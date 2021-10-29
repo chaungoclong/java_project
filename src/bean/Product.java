@@ -1,18 +1,9 @@
 package bean;
 
-public class Product {
-	private int id;
+public class Product extends BaseBean {
 	private String name;
 	private int price;
 	private int amount;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
