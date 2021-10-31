@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import mapper.AutoMapper;
+
 public class Database implements IDatabase {
 	// database config
 	protected static ResourceBundle config = ResourceBundle.getBundle("config.db");
@@ -61,6 +63,23 @@ public class Database implements IDatabase {
 
 			try (ResultSet resultSet = statement.executeQuery();) {
 				results = Result.asList(resultSet);
+			}
+
+			return results;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public <T> List<T> __query(Class<T> clazz, String sql, Object... params) {
+		try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql);) {
+			List<T> results = new ArrayList<T>();
+
+			bindParam(statement, params);
+
+			try (ResultSet resultSet = statement.executeQuery();) {
+				results = AutoMapper.mapList(clazz, resultSet);
 			}
 
 			return results;

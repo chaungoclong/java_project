@@ -6,6 +6,8 @@ public interface IDatabase {
 	// câu lênh SELECT
 	public List<Result> __query(String sql, Object... params);
 
+	public <T> List<T> __query(Class<T> clazz, String sql, Object... params);
+
 	public int __exec(String sql, Object... params);
 
 	// câu lênh INSERT(return id của hàng vừa thêm)

@@ -1,6 +1,11 @@
 package helper;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -108,8 +113,50 @@ public class Helper {
 		return Stream.of(values).flatMap(Stream::of).toArray(Object[]::new);
 	}
 
+	// chuyển resultSet thành List HashMap
+	public static List<Map<String, Object>> resultSetToListHashMap(ResultSet resultSet) {
+		List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+
+		try {
+			ResultSetMetaData metaData = resultSet.getMetaData();
+			int numberColumns = metaData.getColumnCount();
+
+			while (resultSet.next()) {
+				Map<String, Object> row = new HashMap<String, Object>(numberColumns);
+
+				for (int i = 1; i <= numberColumns; i++) {
+					row.put(metaData.getColumnName(i), resultSet.getObject(i));
+				}
+
+				rows.add(row);
+			}
+
+			resultSet.close();
+		} catch (Exception e) {
+			return null;
+		}
+
+		return rows;
+	}
+
 	public static void main(String[] args) {
-		System.out.println(Helper.toCamel("ten lua", true));
+		try {
+			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/java_project", "long", "tnt");
+
+			PreparedStatement pstmt = conn.prepareStatement("select * from users");
+
+			ResultSet rs = pstmt.executeQuery();
+
+			List<Map<String, Object>> result = Helper.resultSetToListHashMap(rs);
+
+			for (Map<String, Object> map : result) {
+				for (String k : map.keySet()) {
+					System.out.println(k + ":" + map.get(k));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 }

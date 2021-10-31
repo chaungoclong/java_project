@@ -28,10 +28,14 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 	// cột khóa chính
 	protected String primaryKey;
 
+	// class của lớp bean
+	protected Class<T> classBean;
+
 	public BaseDAO() {
 		this.table = this.defaultTable();
 		this.mapper = this.defaultMapper();
 		this.insertField = new String[] {};
+		this.classBean = this.defaultClassBean();
 		this.primaryKey = "id";
 	}
 
@@ -95,6 +99,29 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		return mapper;
 	}
 
+	// class bean mặc định
+	@SuppressWarnings("unchecked")
+	public Class<T> defaultClassBean() {
+		String className = this.getClass().getSimpleName().toString();
+		String search = "dao";
+		int index = className.length() - search.length();
+		String compareStr = className.substring(index);
+
+		String classBeanName = "";
+		Class<T> classBean = null;
+
+		if (compareStr.equalsIgnoreCase(search)) {
+			classBeanName = "bean." + className.substring(0, index);
+			try {
+				classBean = (Class<T>) Class.forName(classBeanName);
+			} catch (ClassNotFoundException e) {
+				classBean = null;
+			}
+		}
+
+		return classBean;
+	}
+
 	@Override
 	public int create(T object) {
 		Map<String, Object> data = Helper.objectToHashMap(object);
@@ -103,16 +130,17 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 
 	@Override
 	public int create(Map<String, Object> data) {
-		List<String> listField = Arrays.asList(this.insertField).stream().map(String::toLowerCase).collect(Collectors.toList());
+		List<String> listField = Arrays.asList(this.insertField).stream().map(String::toLowerCase)
+				.collect(Collectors.toList());
 		List<String> removeKey = new ArrayList<String>();
-		
+
 		// tìm tên cột không phù hợp
 		for (String key : data.keySet()) {
 			if (!listField.contains(key.toLowerCase())) {
 				removeKey.add(key);
 			}
 		}
-		
+
 		// xóa cột không phù hợp
 		for (String key : removeKey) {
 			data.remove(key);
@@ -126,17 +154,22 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 
 	@Override
 	public List<T> all() {
+		return Query.table(this.table).get(this.classBean);
+	}
+
+	@Override
+	public List<T> get() {
 		return Query.table(this.table).get(this.mapper);
 	}
 
 	@Override
 	public T find(Object id) {
 		List<T> results = Query.table(this.table).select().where(this.primaryKey, "=", id).get(this.mapper);
-		
+
 		if (results != null && results.size() > 0) {
 			return results.get(0);
 		}
-		
+
 		return null;
 	}
 
@@ -169,6 +202,10 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		}
 
 		return 0;
+	}
+
+	public Class<T> getClassBean() {
+		return classBean;
 	}
 
 }

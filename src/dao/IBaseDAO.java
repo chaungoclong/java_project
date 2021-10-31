@@ -12,6 +12,8 @@ public interface IBaseDAO<T> {
 
 	// lấy tất cả bản ghi
 	public List<T> all();
+	
+	public List<T> get();
 
 	// tìm bản ghi theo id
 	public T find(Object id);

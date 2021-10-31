@@ -1,6 +1,10 @@
 package test;
 
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,8 +15,11 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import bean.Test;
+import bean.TestMapper;
+import bean.User;
 import dao.impl.TestDAO;
 import helper.Helper;
+import mapper.AutoMapper;
 
 public class ForTest {
 	public static void show(Object... p) {
@@ -118,5 +125,42 @@ public class ForTest {
 //		for (Test test : ls) {
 //			System.out.println(test.getId() + "|" + test.getName());
 //		}
+
+//		Map<String, Object> data = new HashMap<String, Object>();
+//		data.put("varshort", null);
+//		data.put("varint", 1000);
+//		data.put("varlong", 10000);
+//		data.put("varfloat", 10000.0f);
+//		data.put("vardouble", "ok");
+//		data.put("varboolean", "0");
+//		data.put("varchar", "a");
+//		data.put("vars_tring", "StringOKGood");
+//		data.put("test", null);
+//
+//		TestMapper test = AutoMapper.map(TestMapper.class, data);
+//
+//		System.out.println(test);
+//		
+//		try {
+//			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/java_project", "long", "tnt");
+//
+//			PreparedStatement pstmt = conn.prepareStatement("select * from users");
+//
+//			ResultSet rs = pstmt.executeQuery();
+//
+//			List<User> users = AutoMapper.mapList(User.class, rs);
+//			
+//			for (User user : users) {
+//				System.out.println(user);
+//			}
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
+		
+		List<Test> ls = new TestDAO().all();
+		
+		for (Test test : ls) {
+			System.out.println(test.getId() + "-" + test.getName());
+		}
 	}
 }

@@ -295,6 +295,15 @@ public class Query {
 		return results;
 	}
 
+	public <T> List<T> get(Class<T> clazz) {
+		String sql = this.sqlBuilder == null ? "SELECT * FROM " + this.table : this.sqlBuilder.toString();
+		Object[] params = this.bindParam.toArray();
+
+		List<T> results = this.db.__query(clazz, sql, params);
+
+		return results;
+	}
+
 	// thực thi câu lênh: UPDATE, DELETE
 	public int run() {
 		String sql = this.sqlBuilder.toString();
