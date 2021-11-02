@@ -8,13 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
+//import java.util.ResourceBundle;
 
+import config.Const;
 import mapper.AutoMapper;
 
 public class Database implements IDatabase {
 	// database config
-	protected static ResourceBundle config = ResourceBundle.getBundle("config.db");
+	// protected static ResourceBundle config = ResourceBundle.getBundle("config.db");
 	private static Database instance = new Database();
 
 	private Database() {
@@ -28,13 +29,13 @@ public class Database implements IDatabase {
 	// kết nối
 	public Connection getConnection() {
 		try {
-			String driver = config.getString("driver");
-			String url = config.getString("url");
-			String userName = config.getString("username");
-			String password = config.getString("password");
+			// String driver = config.getString("driver");
+			// String url = config.getString("url");
+			// String userName = config.getString("username");
+			// String password = config.getString("password");
 
-			Class.forName(driver);
-			Connection connection = DriverManager.getConnection(url, userName, password);
+			Class.forName(Const.DRIVER);
+			Connection connection = DriverManager.getConnection(Const.URL, Const.USERNAME, Const.PASSWORD);
 			return connection;
 		} catch (Exception e) {
 			return null;

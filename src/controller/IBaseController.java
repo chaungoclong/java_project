@@ -6,14 +6,22 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface IBaseController {
-	public static final String VIEW_PATH = "/views/";
+import config.Const;
+import helper.Helper;
 
+public interface IBaseController {
+	
+	// load view
 	default void view(String path, HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		path = VIEW_PATH + path;
+		path = Const.VIEW_PATH + path;
 		request.getRequestDispatcher(path).forward(request, response);
 
 		return;
+	}
+	
+	// tạo đường dẫn chính xác
+	default String url(String path) {
+		return Helper.path(path);
 	}
 }

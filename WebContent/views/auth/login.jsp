@@ -21,7 +21,7 @@
 							<div class="mb-3 text-start">
 								<div class="form-check">
 									<input class="form-check-input" name="remember" type="checkbox" value=""
-										id="check1"> <label class="form-check-label" for="check1"> Remember me on this
+										id="check1" name="remember"> <label class="form-check-label" for="check1"> Remember me on this
 										device </label>
 								</div>
 							</div>

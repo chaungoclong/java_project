@@ -1,9 +1,7 @@
 package controller;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import bean.Product;
 import dao.impl.ProductDAO;
+import helper.Helper;
 
 /**
  * Servlet implementation class ProductController
@@ -90,6 +89,7 @@ public class ProductController extends HttpServlet implements IBaseController {
 			System.out.println(product.toString());
 		}
 		request.setAttribute("listProduct", listProduct);
+
 		this.view("products/index.jsp", request, response);
 
 	}
@@ -105,18 +105,13 @@ public class ProductController extends HttpServlet implements IBaseController {
 	protected void store(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Map<String, String[]> inputs = request.getParameterMap();
+		Product product = Helper.requestToBean(Product.class, request);
 
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("name", inputs.get("name")[0]);
-		data.put("price", inputs.get("price")[0]);
-		data.put("amount", inputs.get("amount")[0]);
-
-		if (this.dao.create(data) != -1) {
-			response.sendRedirect("/PROJECT/product");
+		if (this.dao.create(product) != -1) {
+			response.sendRedirect(this.url("product"));
 			return;
 		} else {
-			response.sendRedirect("/PROJECT/product/create");
+			response.sendRedirect(this.url("product/create"));
 			return;
 		}
 	}
@@ -128,6 +123,7 @@ public class ProductController extends HttpServlet implements IBaseController {
 		Product product = this.dao.find(id);
 
 		request.setAttribute("product", product);
+
 		this.view("products/edit.jsp", request, response);
 	}
 
@@ -135,20 +131,15 @@ public class ProductController extends HttpServlet implements IBaseController {
 	protected void update(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		Map<String, String[]> inputs = request.getParameterMap();
-		Map<String, Object> dataUpdate = new HashMap<String, Object>();
+		Product product = Helper.requestToBean(Product.class, request);
 
-		String id = inputs.get("id")[0];
+		if (this.dao.update(product) > 0) {
+			response.sendRedirect(this.url("product"));
 
-		dataUpdate.put("name", inputs.get("name")[0]);
-		dataUpdate.put("price", inputs.get("price")[0]);
-		dataUpdate.put("amount", inputs.get("amount")[0]);
-
-		if (this.dao.update(id, dataUpdate) > 0) {
-			response.sendRedirect("/PROJECT/product");
 			return;
 		} else {
-			response.sendRedirect("/PROJECT/product/edit?id=" + id);
+			response.sendRedirect(this.url("product/edit?id=" + product.getId()));
+
 			return;
 		}
 	}
@@ -160,7 +151,7 @@ public class ProductController extends HttpServlet implements IBaseController {
 		String id = request.getParameter("id");
 
 		this.dao.delete(id);
-		response.sendRedirect("/PROJECT/product");
+		response.sendRedirect(this.url("product"));
 
 		return;
 	}

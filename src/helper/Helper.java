@@ -1,9 +1,6 @@
 package helper;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
@@ -12,6 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+
+import javax.servlet.http.HttpServletRequest;
+
+import config.Const;
+import mapper.AutoMapper;
 
 public class Helper {
 	// lấy tên các thuộc tính của object
@@ -139,24 +141,29 @@ public class Helper {
 		return rows;
 	}
 
-	public static void main(String[] args) {
-		try {
-			Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/java_project", "long", "tnt");
+	// tạo đường dẫn đúng
+	public static String path(String path) {
+		return Const.WEB_PATH + path;
+	}
 
-			PreparedStatement pstmt = conn.prepareStatement("select * from users");
+	// chuyển request về bean
+	public static <T> T requestToBean(Class<T> clazz, HttpServletRequest request) {
+		// map param từ request
+		Map<String, String[]> mapParam = request.getParameterMap();
 
-			ResultSet rs = pstmt.executeQuery();
+		// map chuyển thành bean
+		Map<String, Object> mapData = new HashMap<String, Object>(mapParam.size());
 
-			List<Map<String, Object>> result = Helper.resultSetToListHashMap(rs);
-
-			for (Map<String, Object> map : result) {
-				for (String k : map.keySet()) {
-					System.out.println(k + ":" + map.get(k));
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (String key : mapParam.keySet()) {
+			mapData.put(key, mapParam.get(key)[0]);
 		}
 
+		T object = AutoMapper.map(clazz, mapData);
+
+		return object;
+	}
+
+	public static void main(String[] args) {
+		System.out.println(Helper.path("product"));
 	}
 }

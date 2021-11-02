@@ -2,6 +2,7 @@ package controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -83,6 +84,7 @@ public class Authentication extends HttpServlet implements IBaseController {
 		// TODO Auto-generated method stub
 		String email = request.getParameter("email");
 		String password = request.getParameter("password");
+		String remember = request.getParameter("remember");
 
 		User user = this.dao.login(email, password);
 
@@ -92,12 +94,20 @@ public class Authentication extends HttpServlet implements IBaseController {
 
 			Session.put(request, "user", user);
 			Session.put(request, "success", "login success");
+			
+			// lưu đăng nhập nếu có
+			if (remember != null) {
+				Cookie save = new Cookie("userid", String.valueOf(user.getId()));
+				save.setMaxAge(24 * 60 * 60);
+				
+				response.addCookie(save);
+			}
 
-			response.sendRedirect("/PROJECT/product");
+			response.sendRedirect(this.url("product"));
 
 			return;
 		} else {
-			response.sendRedirect("/PROJECT/login/form");
+			response.sendRedirect(this.url("login/form"));
 
 			return;
 		}
@@ -117,8 +127,19 @@ public class Authentication extends HttpServlet implements IBaseController {
 //			return;
 //		}
 		Session.remove(request, "user");
+		
+		// xóa cookie lưu đăng nhập
+		Cookie[] cookies = request.getCookies();
+		
+		for (Cookie cookie : cookies) {
+			if (cookie.getName().equals("userid")) {
+				cookie.setMaxAge(0);
+				response.addCookie(cookie);
+				break;
+			}
+		}
 
-		response.sendRedirect("/PROJECT/login/form");
+		response.sendRedirect(this.url("login/form"));
 
 		return;
 	}

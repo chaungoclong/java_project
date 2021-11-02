@@ -85,11 +85,11 @@ public class SignUpController extends HttpServlet implements IBaseController {
 		data.put("password", mapData.get("password")[0]);
 
 		if (this.dao.create(data) != -1) {
-			response.sendRedirect("/PROJECT/login/form");
+			response.sendRedirect(this.url("login/form"));
 
 			return;
 		} else {
-			response.sendRedirect("/PROJECT/signup/form");
+			response.sendRedirect(this.url("signup/form"));
 
 			return;
 		}

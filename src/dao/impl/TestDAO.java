@@ -1,10 +1,8 @@
 package dao.impl;
 
 import dao.ITestDAO;
-import database.Query;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import bean.Test;

@@ -124,12 +124,20 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 
 	@Override
 	public int create(T object) {
+		if (object == null) {
+			return -1;
+		}
+		
 		Map<String, Object> data = Helper.objectToHashMap(object);
 		return this.create(data);
 	}
 
 	@Override
 	public int create(Map<String, Object> data) {
+		if (data == null) {
+			return -1;
+		}
+		
 		List<String> listField = Arrays.asList(this.insertField).stream().map(String::toLowerCase)
 				.collect(Collectors.toList());
 		List<String> removeKey = new ArrayList<String>();
@@ -164,6 +172,10 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 
 	@Override
 	public T find(Object id) {
+		if (id == null) {
+			return null;
+		}
+		
 		List<T> results = Query.table(this.table).select().where(this.primaryKey, "=", id).get(this.mapper);
 
 		if (results != null && results.size() > 0) {
@@ -175,16 +187,28 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 
 	@Override
 	public int delete(Object id) {
+		if (id == null) {
+			return 0;
+		}
+		
 		return Query.table(this.table).delete().where(this.primaryKey, "=", id).run();
 	}
 
 	@Override
 	public int update(Object id, Map<String, Object> data) {
+		if (id == null || data == null) {
+			return 0;
+		}
+		
 		return Query.table(this.table).update(data).where(this.primaryKey, "=", id).run();
 	}
 
 	@Override
 	public int update(T object) {
+		if (object == null) {
+			return 0;
+		}
+		
 		Map<String, Object> data = Helper.objectToHashMap(object);
 		Object idValue = null;
 		String[] idColumns = { this.primaryKey, Helper.toCamel(this.primaryKey, false) };
