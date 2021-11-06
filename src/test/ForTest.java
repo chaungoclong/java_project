@@ -157,10 +157,17 @@ public class ForTest {
 //			ex.printStackTrace();
 //		}
 		
-		List<Test> ls = new TestDAO().all();
+//		List<Test> ls = new TestDAO().all();
+//		
+//		for (Test test : ls) {
+//			System.out.println(test.getId() + "-" + test.getName());
+//		}
 		
-		for (Test test : ls) {
-			System.out.println(test.getId() + "-" + test.getName());
-		}
+		List<String> a = new ArrayList<String>();
+		String[] b = {"okla"};
+		
+		a.addAll(Arrays.asList(b));
+		
+		System.out.println(a.toString());
 	}
 }

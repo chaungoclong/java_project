@@ -126,7 +126,38 @@ public class Database implements IDatabase {
 
 	public static void main(String[] args) {
 		Database db = new Database();
-		List<Result> list = db.__query("select * from tests");
-		System.out.println(list.get(0).get("id"));
+		
+		System.out.println(db.__count("users", "*", "id >= ?", 10));
 	}
+
+	@Override
+	public int __count(String table, String column, String condition, Object... params) {
+		int count = 0;
+		
+		column = (column == null || column.isEmpty()) ? "*" : column;
+		condition = (condition == null || condition.isEmpty()) ? "1" : condition;
+		
+		String sql = "SELECT COUNT(" + column + ") FROM " + table + " WHERE " + condition;
+		
+		try (Connection conn = getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			bindParam(pstmt, params);
+			
+			try (ResultSet resultSet = pstmt.executeQuery()) {
+				if (resultSet.next()) {
+					count = resultSet.getInt(1);
+				}
+			}
+		} catch (Exception e) {
+			count = 0;
+		}
+		
+		return count;
+	}
+
+	@Override
+	public int __count(String table, String column, Object... params) {
+		// TODO Auto-generated method stub
+		return this.__count(table, column, null, params);
+	}
+
 }

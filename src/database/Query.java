@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import helper.Helper;
 import mapper.Mapper;
 
@@ -310,6 +312,55 @@ public class Query {
 		Object[] params = this.bindParam.toArray();
 
 		return this.db.__exec(sql, params);
+	}
+
+	// phân trang
+	public <T> List<T> paginate(HttpServletRequest request, Class<T> clazz, int rowPerPage, String rawSql,
+			Object... params) {
+		List<T> results = new ArrayList<T>();
+		
+		String currentURL = request.getRequestURL().toString();
+		String queryString = request.getQueryString();
+
+		String currentPageStr = request.getParameter("page");
+		int currentPage;
+
+		if (currentPageStr != null) {
+			try {
+				currentPage = Integer.parseInt(currentPageStr);
+			} catch (Exception e) {
+				currentPage = 1;
+			}
+		} else {
+			currentPage = 1;
+		}
+
+		int offset = (currentPage - 1) * rowPerPage;
+		int totalRow = this.db.__count(this.table, "*");
+		int totalPage = (int) Math.ceil((double) totalRow / rowPerPage);
+
+		request.setAttribute("currentPage", currentPage);
+		request.setAttribute("totalPage", totalPage);
+		request.setAttribute("currentURL", currentURL);
+		request.setAttribute("queryString", queryString);
+
+		rawSql = (rawSql == null || rawSql.isEmpty()) ? "" : rawSql;
+		String sql = "SELECT * FROM " + this.table + " " + rawSql + " LIMIT ?, ?";
+		
+		this.bindParam.addAll(Arrays.asList(params));
+		this.bindParam.add(offset);
+		this.bindParam.add(rowPerPage);
+		
+		results = this.db.__query(clazz, sql, this.bindParam.toArray());
+		
+		System.out.println(sql);
+		System.out.println(this.bindParam.toString());
+
+		return results;
+	}
+	
+	public <T> List<T> paginate(HttpServletRequest request, Class<T> clazz, int rowPerPage) {
+		return this.paginate(request, clazz, rowPerPage, null);
 	}
 
 	// get sql

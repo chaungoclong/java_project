@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import dao.IBaseDAO;
 import database.Query;
 import helper.Helper;
@@ -127,7 +129,7 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		if (object == null) {
 			return -1;
 		}
-		
+
 		Map<String, Object> data = Helper.objectToHashMap(object);
 		return this.create(data);
 	}
@@ -137,7 +139,7 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		if (data == null) {
 			return -1;
 		}
-		
+
 		List<String> listField = Arrays.asList(this.insertField).stream().map(String::toLowerCase)
 				.collect(Collectors.toList());
 		List<String> removeKey = new ArrayList<String>();
@@ -175,7 +177,7 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		if (id == null) {
 			return null;
 		}
-		
+
 		List<T> results = Query.table(this.table).select().where(this.primaryKey, "=", id).get(this.mapper);
 
 		if (results != null && results.size() > 0) {
@@ -190,7 +192,7 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		if (id == null) {
 			return 0;
 		}
-		
+
 		return Query.table(this.table).delete().where(this.primaryKey, "=", id).run();
 	}
 
@@ -199,7 +201,7 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		if (id == null || data == null) {
 			return 0;
 		}
-		
+
 		return Query.table(this.table).update(data).where(this.primaryKey, "=", id).run();
 	}
 
@@ -208,7 +210,7 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		if (object == null) {
 			return 0;
 		}
-		
+
 		Map<String, Object> data = Helper.objectToHashMap(object);
 		Object idValue = null;
 		String[] idColumns = { this.primaryKey, Helper.toCamel(this.primaryKey, false) };
@@ -226,6 +228,18 @@ public abstract class BaseDAO<T> implements IBaseDAO<T> {
 		}
 
 		return 0;
+	}
+
+	@Override
+	public List<T> paginate(HttpServletRequest request, int rowPerPage, String rawSql, Object... params) {
+		return Query.table(this.table).paginate(request, this.classBean, rowPerPage, rawSql, params);
+	}
+	
+	
+	@Override
+	public List<T> paginate(HttpServletRequest request, int rowPerPage) {
+		// TODO Auto-generated method stub
+		return this.paginate(request, rowPerPage, null);
 	}
 
 	public Class<T> getClassBean() {

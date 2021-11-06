@@ -55,6 +55,8 @@ public class ProductController extends HttpServlet implements IBaseController {
 		response.setContentType("text/html; charset=UTF-8");
 
 		String uri = request.getServletPath();
+		
+		System.out.println(request.getQueryString());
 
 		switch (uri) {
 		case "/product":
@@ -84,10 +86,12 @@ public class ProductController extends HttpServlet implements IBaseController {
 	// index
 	protected void index(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		List<Product> listProduct = (new ProductDAO()).all();
-		for (Product product : listProduct) {
-			System.out.println(product.toString());
-		}
+		List<Product> listProduct = this.dao.paginate(request, 3);
+		
+		System.out.println(listProduct);
+//		for (Product product : listProduct) {
+//			System.out.println(product.toString());
+//		}
 		request.setAttribute("listProduct", listProduct);
 
 		this.view("products/index.jsp", request, response);

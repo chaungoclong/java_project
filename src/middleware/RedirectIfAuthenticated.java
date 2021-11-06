@@ -51,25 +51,27 @@ public class RedirectIfAuthenticated implements Filter {
 
 		// kiểm tra có lưu đăng nhập
 		Cookie[] cookies = req.getCookies();
-		
-		for (Cookie cookie : cookies) {
-			if (cookie.getName().equals("userid")) {
-				String userId = cookie.getValue();
 
-				User user = dao.find(userId);
-				
-				if (user != null) {
-					Session.put(req, "user", user);
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("userid")) {
+					String userId = cookie.getValue();
 
-					res.sendRedirect(Helper.path("product"));
+					User user = dao.find(userId);
 
-					return;
-				} else {
-					break;
+					if (user != null) {
+						Session.put(req, "user", user);
+
+						res.sendRedirect(Helper.path("product"));
+
+						return;
+					} else {
+						break;
+					}
 				}
 			}
 		}
-		
+
 		// kiểm tra session
 		HttpSession session = req.getSession(false);
 

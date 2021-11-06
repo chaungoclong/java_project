@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 	<%@ include file="../common/tag.jsp" %>
-
+		${requestScope.totalPage}
 		<c:layout>
 			<jsp:attribute name="css">
 				<style>
@@ -65,6 +65,7 @@
 											</a:choose>
 										</tbody>
 									</table>
+									<c:links append="a=${requestScope.totalPage}"/>
 								</div>
 							</div>
 						</div>

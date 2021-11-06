@@ -3,6 +3,8 @@ package dao;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 public interface IBaseDAO<T> {
 	// tạo bản ghi mới từ object
 	public int create(T object);
@@ -26,4 +28,9 @@ public interface IBaseDAO<T> {
 	
 	// cập nhật bản ghi thẹo object (objetc đã có id trong đó)
 	public int update(T object);
+	
+	// phân trang
+	public List<T> paginate(HttpServletRequest request, int rowPerPage, String rawSql, Object... params);
+	
+	public List<T> paginate(HttpServletRequest request, int rowPerPage);
 }
