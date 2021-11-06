@@ -44,9 +44,14 @@
             			message: {
             				selector: ".msg",
             				whenError: "alert alert-danger"
+            			},
+            			customMessage: {
+            				required: "this is required",
+            				is_number: ":v is not a number",
+            				min_length: "min length is :v",
+            				max_length: "max length is :v",
             			}
-        
-            		})
+            		});
             	</script>
             </jsp:attribute>
         </c:layout>
